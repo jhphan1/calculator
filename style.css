@@ -1,0 +1,86 @@
+html {
+    background-color: rgb(235, 230, 203);
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.calc-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    height: 500px;
+    width: 400px;
+    background-color: lightgrey;
+    border: solid grey 1px;
+    border-radius: 6px;
+    padding: 16px;
+    gap: 6px;
+    box-shadow: 0px 0px 5px black;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    flex: 1;
+}
+
+#display {
+    background-color: rgb(158, 224, 158);
+    border: solid grey 1px;
+    border-radius: 3px;
+    flex: 2;
+    margin-bottom: 8px;
+    box-shadow: inset 0px 0px 3px black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: right;
+    padding: 0px 32px;
+    font-size: 30px;
+}
+
+p {
+    margin: 0px;
+    color:rgb(30, 71, 30);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#answer {
+    font-size: 60px;
+}
+
+button {
+    background-color: rgb(255, 216, 202);
+    color: rgb(0, 0, 0);
+    font-size: larger;
+    font-weight: bold;
+    border: 0px;
+    border-radius: 3px;
+    flex: 1;
+    box-shadow: 0px 0px 2px black;
+    font-family: helvetica, sans-serif;
+}
+
+.operator {
+    background-color: rgb(255, 172, 142);
+}
+
+.special {
+    background-color: rgb(224, 94, 47);
+}
+
+button:hover {
+    opacity: 0.75;
+}
+
+.clicked-button {
+    transform: scale(0.99);
+    box-shadow: inset 0px 0px 5px black;
+}
