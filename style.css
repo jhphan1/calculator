@@ -31,7 +31,7 @@ body {
     flex: 1;
 }
 
-#display {
+#screen {
     background-color: rgb(158, 224, 158);
     border: solid grey 1px;
     border-radius: 3px;
@@ -52,7 +52,7 @@ p {
     font-family: 'Courier New', Courier, monospace;
 }
 
-#answer {
+#display {
     font-size: 60px;
 }
 
@@ -66,6 +66,7 @@ button {
     flex: 1;
     box-shadow: 0px 0px 2px black;
     font-family: helvetica, sans-serif;
+    transition: 0.1s;
 }
 
 .operator {
@@ -83,4 +84,9 @@ button:hover {
 .clicked-button {
     transform: scale(0.99);
     box-shadow: inset 0px 0px 5px black;
+}
+
+.active-operator {
+    background-color: rgb(156, 43, 1);
+    color: white;
 }
