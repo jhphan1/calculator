@@ -9,7 +9,7 @@ const operatorInput = document.querySelector("#operatorInput");
 const yInput = document.querySelector("#yInput");
 const decimal = document.querySelector("#decimal");
 const clear = document.querySelector("#clear");
-const del = document.querySelector("#del");
+const backspace = document.querySelector("#backspace");
 
 // Declare variables
 let x;
@@ -18,7 +18,11 @@ let activeOperator;
 let replaceDisplay = false;
 
 // Apply on-click visual effect to all buttons
-buttons.forEach(button => button.addEventListener("click", () => button.classList.add("clicked-button")));
+buttons.forEach(button => button.addEventListener("click", () => {
+    button.classList.add("clicked-button");
+    // All buttons should also remove active-operator visual on click
+    operators.forEach(operator => operator.classList.remove("active-operator"));
+}))
 buttons.forEach(button => button.addEventListener("transitionend", removeTransition));
 
 // Number button on-click functions
@@ -39,15 +43,22 @@ numbers.forEach(number => number.addEventListener("click", (e) => {
     operators.forEach(operator => operator.classList.remove("active-operator"));
 }))
 
-// TODO: Decimal button on-click function
+// Decimal button on-click function
 decimal.addEventListener("click", (e) => {
-    // TODO: Do nothing if display already has decimal
-    if (display.textContent.length > 0 && Number.isInteger(display.textContent)) return;
-    // If first character, add "0" in front
-    if (display.textContent.length === 0) {
+    // If replaceDisplay === true, create new number instead of appending number
+    if (replaceDisplay) {
         display.textContent = "0.";
+        replaceDisplay = false;
     } else {
-        display.textContent += e.target.innerHTML;
+        // Do nothing if display already has decimal
+        if (display.textContent.length > 0 && !Number.isInteger(Number(display.textContent)) ||
+        display.textContent === "0.") return;
+        // If first character, add "0" in front
+        if (display.textContent.length === 0) {
+            display.textContent = "0.";
+        } else {
+            display.textContent += e.target.innerHTML;
+        }
     }
 })
 
@@ -63,9 +74,10 @@ clear.addEventListener("click", () => {
     yInput.textContent = "";
 })
 
-// Del button on-click function
-del.addEventListener("click", () => {
-    if (display.textContent.length > 0) {
+// Backspace button on-click function
+backspace.addEventListener("click", () => {
+    // Only delete is there are characters in display, and the display is not a previous answer
+    if (display.textContent.length > 0 && !replaceDisplay) {
         display.textContent = display.textContent.slice(0, -1);
     }
 })
@@ -83,7 +95,7 @@ operators.forEach(operator => operator.addEventListener("click", (e) => {
         y = Number(display.textContent);
     }
     // Run calculate() if all variables are there and set answer as new "x"
-    if (x && y && activeOperator) x = calculate(x, y, activeOperator);
+    if (y === 0 || y && activeOperator) x = calculate(x, y, activeOperator);
     // Store clicked operator
     activeOperator = e.target.innerHTML;
     // Next number click should replace display
@@ -98,8 +110,8 @@ equal.addEventListener("click", () => {
     if (!x) return;
     // Store current display as "y"
     if (!y && replaceDisplay != true) y = Number(display.textContent);
-    // Run calculate function and set answer as new "x"
-    if (x && y && activeOperator) x = calculate(x, y, activeOperator);
+    // Run calculate function if "y" value is present, and set answer as new "x"
+    if (y === 0 || y && activeOperator) x = calculate(x, y, activeOperator);
     // Replace display with next number
     replaceDisplay = true;
     // Reset "y"
@@ -125,6 +137,10 @@ function calculate(x, y, operator) {
     operatorInput.textContent = operator;
     yInput.textContent = y;
 
+    // Convert variables to numbers
+    x = Number(x);
+    y = Number(y);
+
     switch (operator) {
         case "+":
             answer = x + y;
@@ -137,6 +153,7 @@ function calculate(x, y, operator) {
             break;
         case "÷":
             if (y === 0) {
+                console.log("hi");
                 display.textContent = "no :("
                 return undefined;
             }
@@ -144,7 +161,7 @@ function calculate(x, y, operator) {
             break;
     }
     // Round answers with decimals
-    if (!Number.isInteger(answer)) answer = answer.toFixed(3);
+    if (!Number.isInteger(answer)) answer = Number(answer.toFixed(3));
     // If too big, toExponential()
     if (answer.toString().length > 9) answer = answer.toExponential(3);
     
