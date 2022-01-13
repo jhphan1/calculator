@@ -57,6 +57,7 @@ clear.addEventListener("click", () => {
     x = undefined;
     y = undefined;
     activeOperator = undefined;
+    replaceDisplay = false;
     xInput.textContent = "";
     operatorInput.textContent = "";
     yInput.textContent = "";
@@ -75,18 +76,20 @@ operators.forEach(operator => operator.addEventListener("click", (e) => {
     operators.forEach(operator => operator.classList.remove("active-operator"));
     // Apply active-operator visual effect to target operator
     operator.classList.add("active-operator");
-    // Next number click should replace display
-    replaceDisplay = true;
     // Store current display as "x" or "y"
     if (!x) {
         x = Number(display.textContent);
-    } else {
+    } else if (replaceDisplay != true) {
         y = Number(display.textContent);
     }
     // Run calculate() if all variables are there and set answer as new "x"
     if (x && y && activeOperator) x = calculate(x, y, activeOperator);
     // Store clicked operator
     activeOperator = e.target.innerHTML;
+    // Next number click should replace display
+    replaceDisplay = true;
+    // Reset "y"
+    y = undefined;
 }))
 
 // "=" button on-click functions
@@ -94,14 +97,15 @@ equal.addEventListener("click", () => {
     // If no "x", do nothing
     if (!x) return;
     // Store current display as "y"
-    if (!y) y = Number(display.textContent);
+    if (!y && replaceDisplay != true) y = Number(display.textContent);
     // Run calculate function and set answer as new "x"
-    x = calculate(x, y, activeOperator);
+    if (x && y && activeOperator) x = calculate(x, y, activeOperator);
     // Replace display with next number
     replaceDisplay = true;
+    // Reset "y"
+    y = undefined;
     // Remove active-operator visual from all operators
     operators.forEach(operator => operator.classList.remove("active-operator"));
-    // What happens when "=" pushed again
 })
 
 
