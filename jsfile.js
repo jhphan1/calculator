@@ -39,8 +39,6 @@ numbers.forEach(number => number.addEventListener("click", (e) => {
         // Append number to display
         display.textContent += e.target.innerHTML;
     }
-    // Remove active-operator visual from all operators
-    operators.forEach(operator => operator.classList.remove("active-operator"));
 }))
 
 // Decimal button on-click function
@@ -84,8 +82,6 @@ backspace.addEventListener("click", () => {
 
 // Operator button on-click functions
 operators.forEach(operator => operator.addEventListener("click", (e) => {
-    // Remove active-operator visual from all operators
-    operators.forEach(operator => operator.classList.remove("active-operator"));
     // Apply active-operator visual effect to target operator
     operator.classList.add("active-operator");
     // Store current display as "x" or "y"
@@ -100,7 +96,7 @@ operators.forEach(operator => operator.addEventListener("click", (e) => {
     activeOperator = e.target.innerHTML;
     // Next number click should replace display
     replaceDisplay = true;
-    // Reset "y"
+    // Reset "y" to disable re-calculating if operator immediately clicked again
     y = undefined;
 }))
 
@@ -114,10 +110,16 @@ equal.addEventListener("click", () => {
     if (y === 0 || y && activeOperator) x = calculate(x, y, activeOperator);
     // Replace display with next number
     replaceDisplay = true;
-    // Reset "y"
+    // Reset "y" to disable re-calculating if "=" immediately clicked again
     y = undefined;
-    // Remove active-operator visual from all operators
-    operators.forEach(operator => operator.classList.remove("active-operator"));
+})
+
+
+// // Keyboard support
+window.addEventListener("keydown", (e) => {
+    const key = document.querySelector(`.a${e.keyCode}`);
+    if (!key) return;
+    console.log(key);
 })
 
 
