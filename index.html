@@ -8,12 +8,12 @@
 <body>
     <div class="calc-body">
         <div class="row" id="screen">
-            <p id="input">1 + 1</p>
+            <p id="input"><span id="xInput"></span><span id="operatorInput"></span><span id="yInput"></span></p>
             <p id="display"></p>
         </div>
         <div class="row">
-            <button class="special">Clear</button>
-            <button class="special">Delete</button>
+            <button class="special" id="clear">Clear</button>
+            <button class="special" id="del">Delete</button>
         </div>
         <div class="row">
             <button class="number">7</button>
@@ -35,8 +35,8 @@
         </div>
         <div class="row">
             <button class="number">0</button>
-            <button>.</button>
-            <button class="special">=</button>
+            <button id="decimal">.</button>
+            <button class="special equal">=</button>
             <button class="operator">+</button>
         </div>
     </div>
