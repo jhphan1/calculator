@@ -42,43 +42,13 @@ numbers.forEach(number => number.addEventListener("click", (e) => {
 }))
 
 // Decimal button on-click function
-decimal.addEventListener("click", (e) => {
-    // If replaceDisplay === true, create new number instead of appending number
-    if (replaceDisplay) {
-        display.textContent = "0.";
-        replaceDisplay = false;
-    } else {
-        // Do nothing if display already has decimal
-        if (display.textContent.length > 0 && !Number.isInteger(Number(display.textContent)) ||
-        display.textContent === "0.") return;
-        // If first character, add "0" in front
-        if (display.textContent.length === 0) {
-            display.textContent = "0.";
-        } else {
-            display.textContent += e.target.innerHTML;
-        }
-    }
-})
+decimal.addEventListener("click", inputDecimal);
 
 // Clear button on-click function
-clear.addEventListener("click", () => {
-    display.textContent = "";
-    x = undefined;
-    y = undefined;
-    activeOperator = undefined;
-    replaceDisplay = false;
-    xInput.textContent = "";
-    operatorInput.textContent = "";
-    yInput.textContent = "";
-})
+clear.addEventListener("click", doClear);
 
 // Backspace button on-click function
-backspace.addEventListener("click", () => {
-    // Only delete is there are characters in display, and the display is not a previous answer
-    if (display.textContent.length > 0 && !replaceDisplay) {
-        display.textContent = display.textContent.slice(0, -1);
-    }
-})
+backspace.addEventListener("click", doBackspace);
 
 // Operator button on-click functions
 operators.forEach(operator => operator.addEventListener("click", (e) => {
@@ -101,26 +71,75 @@ operators.forEach(operator => operator.addEventListener("click", (e) => {
 }))
 
 // "=" button on-click functions
-equal.addEventListener("click", () => {
+equal.addEventListener("click", doEquals);
+
+// $$$ TODO $$$: Keyboard support
+window.addEventListener("keydown", (e) => {
+    const key = document.querySelector(`.a${e.keyCode}`);
+    if (!key) return;
+    // Unique keys
+    if (key.textContent === "Backspace") doBackspace();
+    if (key.textContent === "Clear") doClear();
+    if (key.textContent === "=") doEquals();
+    if (key.textContent === ".") inputDecimal();
+})
+
+
+// Inputs decimal in display
+function inputDecimal() {
+    // If replaceDisplay === true, create new number instead of appending number
+    if (replaceDisplay) {
+        display.textContent = "0.";
+        replaceDisplay = false;
+    } else {
+        // Do nothing if display already has decimal
+        if (display.textContent.length > 0 && !Number.isInteger(Number(display.textContent)) ||
+                display.textContent === "0.") return;
+        // If first character, add "0" in front
+        if (display.textContent.length === 0) {
+            display.textContent = "0.";
+        } else {
+            display.textContent += ".";
+        }
+    }
+}
+
+
+// If x and operator are stored, Equals stores y and runs calculate on all variables
+function doEquals() {
     // If no "x", do nothing
     if (!x) return;
     // Store current display as "y"
     if (!y && replaceDisplay != true) y = Number(display.textContent);
     // Run calculate function if "y" value is present, and set answer as new "x"
     if (y === 0 || y && activeOperator) x = calculate(x, y, activeOperator);
-    // Replace display with next number
+    // Next number click should replace display
     replaceDisplay = true;
     // Reset "y" to disable re-calculating if "=" immediately clicked again
     y = undefined;
-})
+}
 
 
-// // Keyboard support
-window.addEventListener("keydown", (e) => {
-    const key = document.querySelector(`.a${e.keyCode}`);
-    if (!key) return;
-    console.log(key);
-})
+// Clears display and resets all variables
+function doClear() {
+    display.textContent = "";
+    x = undefined;
+    y = undefined;
+    activeOperator = undefined;
+    replaceDisplay = false;
+    xInput.textContent = "";
+    operatorInput.textContent = "";
+    yInput.textContent = "";
+}
+
+
+// Deletes last letter in display
+function doBackspace() {
+    // Only delete if there are characters in display, and the display is not a previous answer
+    if (display.textContent.length > 0 && !replaceDisplay) {
+        display.textContent = display.textContent.slice(0, -1);
+    }
+}
 
 
 // Makes it so button on-click visual is brief
