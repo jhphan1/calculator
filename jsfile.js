@@ -1,4 +1,4 @@
-// Create variables for HTML components
+// Create constants for HTML components
 const display = document.querySelector("#display");
 const buttons = document.querySelectorAll("button");
 const numbers = document.querySelectorAll(".number");
@@ -17,6 +17,7 @@ let y;
 let activeOperator;
 let replaceDisplay = false;
 
+// Add on-click event listeners
 // Apply on-click visual effect to all buttons
 buttons.forEach(button => button.addEventListener("click", () => {
     button.classList.add("clicked-button");
@@ -24,65 +25,46 @@ buttons.forEach(button => button.addEventListener("click", () => {
     operators.forEach(operator => operator.classList.remove("active-operator"));
 }))
 buttons.forEach(button => button.addEventListener("transitionend", removeTransition));
-
-// Number button on-click functions
-numbers.forEach(number => number.addEventListener("click", (e) => {
-    // 0 can't be first number
-    if (display.textContent.length === 0 && e.target.innerHTML === "0") return;
-    // If replaceDisplay === true, create new number instead of appending number
-    if (replaceDisplay) {
-        display.textContent = e.target.innerHTML;
-        replaceDisplay = false;
-    } else {
-        // Stop if display has 9 chars
-        if (display.textContent.length === 9) return;
-        // Append number to display
-        display.textContent += e.target.innerHTML;
-    }
-}))
-
-// Decimal button on-click function
+numbers.forEach(number => number.addEventListener("click", (e) => inputNumber(e.target.innerHTML)));
 decimal.addEventListener("click", inputDecimal);
-
-// Clear button on-click function
+operators.forEach(operator => operator.addEventListener("click", (e) => chooseOperator(e.target)));
+equal.addEventListener("click", doEquals);
 clear.addEventListener("click", doClear);
-
-// Backspace button on-click function
 backspace.addEventListener("click", doBackspace);
 
-// Operator button on-click functions
-operators.forEach(operator => operator.addEventListener("click", (e) => {
-    // Apply active-operator visual effect to target operator
-    operator.classList.add("active-operator");
-    // Store current display as "x" or "y"
-    if (!x) {
-        x = Number(display.textContent);
-    } else if (replaceDisplay != true) {
-        y = Number(display.textContent);
-    }
-    // Run calculate() if all variables are there and set answer as new "x"
-    if (y === 0 || y && activeOperator) x = calculate(x, y, activeOperator);
-    // Store clicked operator
-    activeOperator = e.target.innerHTML;
-    // Next number click should replace display
-    replaceDisplay = true;
-    // Reset "y" to disable re-calculating if operator immediately clicked again
-    y = undefined;
-}))
-
-// "=" button on-click functions
-equal.addEventListener("click", doEquals);
-
-// $$$ TODO $$$: Keyboard support
+// Keyboard support: uses HTML classes "a" + keyCode to match keydown to element
 window.addEventListener("keydown", (e) => {
     const key = document.querySelector(`.a${e.keyCode}`);
     if (!key) return;
+    // All key clicks should remove active-operator visual
+    operators.forEach(operator => operator.classList.remove("active-operator"));
+    // Number keys
+    if (key.classList.contains("number")) inputNumber(key.textContent);
+    // Operator keys
+    if (key.classList.contains("operator")) chooseOperator(key);
     // Unique keys
     if (key.textContent === "Backspace") doBackspace();
     if (key.textContent === "Clear") doClear();
     if (key.textContent === "=") doEquals();
     if (key.textContent === ".") inputDecimal();
 })
+
+
+// Inputs number in display
+function inputNumber(number) {
+    // 0 can't be first number
+    if (display.textContent.length === 0 && number === "0") return;
+    // If replaceDisplay === true, create new number instead of appending number
+    if (replaceDisplay) {
+        display.textContent = number;
+        replaceDisplay = false;
+    } else {
+        // Stop if display has 9 chars
+        if (display.textContent.length === 9) return;
+        // Append number to display
+        display.textContent += number;
+    }
+}
 
 
 // Inputs decimal in display
@@ -95,6 +77,8 @@ function inputDecimal() {
         // Do nothing if display already has decimal
         if (display.textContent.length > 0 && !Number.isInteger(Number(display.textContent)) ||
                 display.textContent === "0.") return;
+        // Stop if display has 9 chars
+        if (display.textContent.length === 9) return;
         // If first character, add "0" in front
         if (display.textContent.length === 0) {
             display.textContent = "0.";
@@ -102,6 +86,27 @@ function inputDecimal() {
             display.textContent += ".";
         }
     }
+}
+
+
+// Chooses operator and calls calculate() if "y" is stored
+function chooseOperator(operator) {
+    // Apply active-operator visual effect to target operator
+    operator.classList.add("active-operator");
+    // Store current display as "x" or "y"
+    if (!x) {
+        x = Number(display.textContent);
+    } else if (replaceDisplay != true) {
+        y = Number(display.textContent);
+    }
+    // Run calculate() if all variables are there and set answer as new "x"
+    if (y === 0 || y && activeOperator) x = calculate(x, y, activeOperator);
+    // Store clicked operator
+    activeOperator = operator.textContent;
+    // Next number click should replace display
+    replaceDisplay = true;
+    // Reset "y" to disable re-calculating if operator immediately clicked again
+    y = undefined;
 }
 
 
@@ -149,7 +154,7 @@ function removeTransition(e) {
 }
 
 
-// Function runs when user presses "="
+// Calculates number pair with given operator and shows answer on display
 function calculate(x, y, operator) {
     let answer;
 
